@@ -1,0 +1,21 @@
+{
+    "id": "unique_id",
+    "extRevision": "0.3.4",
+    "userRevision": "0",
+    "dataSourceId": "snmp",
+    "dataSourceVersion": "5",
+    "extConfiguration": {},
+    "userConfiguration" : {
+    "enabled":true,
+    "description":"template for task",
+    "version":"1.4.6",
+    "featureSets":["list", "of", "featureSets"],
+    "vars":{},
+    "snmp":{
+        "devices":[{"ip":"1.2.3.4","port":161,"authentication":{"type":"SNMPv2c","community":"community"}}]
+        }
+    }
+}
+    
+    
+    

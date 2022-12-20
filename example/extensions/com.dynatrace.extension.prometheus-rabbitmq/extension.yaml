@@ -1,0 +1,1272 @@
+name: com.dynatrace.extension.prometheus-rabbitmq
+version: 1.1.4
+minDynatraceVersion: "1.229"
+author:
+  name: Dynatrace
+
+dashboards:
+  - path: "dashboards/dashboard.json"
+
+alerts:
+  - path: "alerts/alert_file_descriptors_usage.json"
+  - path: "alerts/alert_low_disk_space.json"
+  - path: "alerts/alert_memory_usage.json"
+  - path: "alerts/alert_processes_usage.json"
+  - path: "alerts/alert_ready_messages.json"
+  - path: "alerts/alert_socket_usage.json"
+
+# Extension based on official rabbitmq prometheus exporter available metrics
+# list of metrics visible here https://github.com/rabbitmq/rabbitmq-server/blob/master/deps/rabbitmq_prometheus/metrics.md
+
+metrics:
+  - key: func:com.dynatrace.extension.prometheus-rabbitmq.generic.memory_available_before_publishers_blocked
+    query:
+      metricSelector: '(com.dynatrace.extension.prometheus-rabbitmq.generic.resident_memory_limit_bytes) - (com.dynatrace.extension.prometheus-rabbitmq.generic.process_resident_memory_bytes)'
+    metadata:
+      displayName: Memory available before publishers blocked
+      description: Memory available before publishers blocked
+      unit: Byte
+  - key: func:com.dynatrace.extension.prometheus-rabbitmq.channels.publishers
+    query:
+      metricSelector: '(com.dynatrace.extension.prometheus-rabbitmq.channels.channels) - (com.dynatrace.extension.prometheus-rabbitmq.channels.channel_consumers)'
+    metadata:
+      displayName: Publishers
+      description: Number of publishers
+      unit: Unspecified
+  - key: func:com.dynatrace.extension.prometheus-rabbitmq.generic.fds_available
+    query:
+      metricSelector: '(com.dynatrace.extension.prometheus-rabbitmq.generic.process_max_fds) - (com.dynatrace.extension.prometheus-rabbitmq.generic.process_open_fds)'
+    metadata:
+      displayName: File Descriptors available
+      description: Number of file descriptors available
+      unit: Unspecified
+  - key: func:com.dynatrace.extension.prometheus-rabbitmq.tcp_sockets_available
+    query:
+      metricSelector: '(com.dynatrace.extension.prometheus-rabbitmq.generic.process_max_tcp_sockets) - (com.dynatrace.extension.prometheus-rabbitmq.generic.process_open_tcp_sockets)'
+    metadata:
+      displayName: TCP Sockets available
+      description: Number of TCP Sockets available
+      unit: Unspecified
+  - key: func:com.dynatrace.extension.prometheus-rabbitmq.connections.connections_opened_total.persec
+    query:
+      metricSelector: '(com.dynatrace.extension.prometheus-rabbitmq.connections.connections_opened_total.count) / (60)'
+    metadata:
+      displayName: Connections opened per second
+      description: Number of connections opened per second
+      unit: PerSecond
+  - key: func:com.dynatrace.extension.prometheus-rabbitmq.connections.connections_closed_total.persec
+    query:
+      metricSelector: '(com.dynatrace.extension.prometheus-rabbitmq.connections.connections_closed_total.count) / (60)'
+    metadata:
+      displayName: Connections closed per second
+      description: Number of connections closed per second
+      unit: PerSecond
+  - key: func:com.dynatrace.extension.prometheus-rabbitmq.channels.channels_closed_total.persec
+    query:
+      metricSelector: '(com.dynatrace.extension.prometheus-rabbitmq.channels.channels_closed_total.count) / (60)'
+    metadata:
+      displayName: Channels closed per second
+      description: Number of channels closed per second
+      unit: PerSecond
+  - key: func:com.dynatrace.extension.prometheus-rabbitmq.channels.channels_opened_total.persec
+    query:
+      metricSelector: '(com.dynatrace.extension.prometheus-rabbitmq.channels.channels_opened_total.count) / (60)'
+    metadata:
+      displayName: Channels opened per second
+      description: Number of channels opened per second
+      unit: PerSecond
+  - key: func:com.dynatrace.extension.prometheus-rabbitmq.queues.queues_declared_total.persec
+    query:
+      metricSelector: '(com.dynatrace.extension.prometheus-rabbitmq.queues.queues_declared_total.count) / (60)'
+    metadata:
+      displayName: Queues declared per second
+      description: Number of queues declared per second
+      unit: PerSecond
+  - key: func:com.dynatrace.extension.prometheus-rabbitmq.queues.queues_created_total.persec
+    query:
+      metricSelector: '(com.dynatrace.extension.prometheus-rabbitmq.queues.queues_created_total.count) / (60)'
+    metadata:
+      displayName: Queues created per second
+      description: Number of queues created per second
+      unit: PerSecond
+  - key: func:com.dynatrace.extension.prometheus-rabbitmq.queues.queues_deleted_total.persec
+    query:
+      metricSelector: '(com.dynatrace.extension.prometheus-rabbitmq.queues.queues_deleted_total.count) / (60)'
+    metadata:
+      displayName: Queues deleted per second
+      description: Number of queues deleted per second
+      unit: PerSecond
+  - key: func:com.dynatrace.extension.prometheus-rabbitmq.channels.channel_get_empty_total.persec
+    query:
+      metricSelector: '(com.dynatrace.extension.prometheus-rabbitmq.channels.channel_get_empty_total.count) / (60)'
+    metadata:
+      displayName: Polling operation that yield no result per second
+      description: Number of polling operation that yield no result per second
+      unit: PerSecond
+  - key: func:com.dynatrace.extension.prometheus-rabbitmq.channels.channel_get_ack_total.persec
+    query:
+      metricSelector: '(com.dynatrace.extension.prometheus-rabbitmq.channels.channel_get_ack_total.count) / (60)'
+    metadata:
+      displayName: Polling operation with manual ack per second
+      description: Number of polling operation with manual ack per second
+      unit: PerSecond
+  - key: func:com.dynatrace.extension.prometheus-rabbitmq.channels.channel_get_total.persec
+    query:
+      metricSelector: '(com.dynatrace.extension.prometheus-rabbitmq.channels.channel_get_total.count) / (60)'
+    metadata:
+      displayName: Polling operation with auto ack per second
+      description: Number of polling operation with auto ack per second
+      unit: PerSecond
+  - key: func:com.dynatrace.extension.prometheus-rabbitmq.channels.channel_messages_acked_total.persec
+    query:
+      metricSelector: '(com.dynatrace.extension.prometheus-rabbitmq.channels.channel_messages_acked_total.count) / (60)'
+    metadata:
+      displayName: Messages acknowledged per second
+      description: Number of messages acknowledged per second
+      unit: PerSecond
+  - key: func:com.dynatrace.extension.prometheus-rabbitmq.channels.channel_messages_delivered_total.persec
+    query:
+      metricSelector: '(com.dynatrace.extension.prometheus-rabbitmq.channels.channel_messages_delivered_total.count) / (60)'
+    metadata:
+      displayName: Messages delivered auto ack per second
+      description: Number of messages delivered auto ack per second
+      unit: PerSecond
+  - key: func:com.dynatrace.extension.prometheus-rabbitmq.channels.channel_messages_delivered_ack_total.persec
+    query:
+      metricSelector: '(com.dynatrace.extension.prometheus-rabbitmq.channels.channel_messages_delivered_ack_total.count) / (60)'
+    metadata:
+      displayName: Messages delivered with manual ack per second
+      description: Number of messages delivered with manual ack per second
+      unit: PerSecond
+  - key: func:com.dynatrace.extension.prometheus-rabbitmq.channels.channel_messages_redelivered_total.persec
+    query:
+      metricSelector: '(com.dynatrace.extension.prometheus-rabbitmq.channels.channel_messages_redelivered_total.count) / (60)'
+    metadata:
+      displayName: Messages redelivered per second
+      description: Number of messages redelivered per second
+      unit: PerSecond
+  - key: func:com.dynatrace.extension.prometheus-rabbitmq.channels.channel_messages_delivered.persec
+    query:
+      metricSelector: '(com.dynatrace.extension.prometheus-rabbitmq.channels.channel_messages_delivered_total.count) / (60) + (com.dynatrace.extension.prometheus-rabbitmq.channels.channel_messages_delivered_ack_total.count) / (60)'
+    metadata:
+      displayName: Messages delivered per second
+      description: Number of messages delivered per second
+      unit: PerSecond
+  - key: func:com.dynatrace.extension.prometheus-rabbitmq.channels.channel_outgoing_messages.persec
+    query:
+      metricSelector: '(com.dynatrace.extension.prometheus-rabbitmq.channels.channel_messages_redelivered_total.count) / (60) + (com.dynatrace.extension.prometheus-rabbitmq.channels.channel_messages_delivered_total.count) / (60) + (com.dynatrace.extension.prometheus-rabbitmq.channels.channel_messages_delivered_ack_total.count) / (60) + (com.dynatrace.extension.prometheus-rabbitmq.channels.channel_get_total.count) / (60) + (com.dynatrace.extension.prometheus-rabbitmq.channels.channel_get_ack_total.count) / (60)'
+    metadata:
+      displayName: Outgoing messages per second
+      description: Number of outgoing messages per second
+      unit: PerSecond
+  - key: com.dynatrace.extension.prometheus-rabbitmq.generic.disk_space_available_bytes
+    metadata:
+      displayName: Disk space available
+      description: Disk space available in bytes
+      unit: Byte
+  - key: com.dynatrace.extension.prometheus-rabbitmq.queues.queue_messages_ready
+    metadata:
+      displayName: Messages ready
+      description: Number of ready messages
+      unit: Unspecified
+  - key: com.dynatrace.extension.prometheus-rabbitmq.channels.channels
+    metadata:
+      displayName: Channels
+      description: Number of channels
+      unit: Unspecified
+  - key: com.dynatrace.extension.prometheus-rabbitmq.queues.queues
+    metadata:
+      displayName: Queues
+      description: Number of queues
+      unit: Unspecified
+  - key: com.dynatrace.extension.prometheus-rabbitmq.queues.queue_messages_unacked
+    metadata:
+      displayName: Unacknowledged messages
+      description: Number of unacknowledged messages
+      unit: Unspecified
+  - key: com.dynatrace.extension.prometheus-rabbitmq.channels.channel_consumers
+    metadata:
+      displayName: Consumers
+      description: Number of consumers
+      unit: Unspecified
+  - key: com.dynatrace.extension.prometheus-rabbitmq.connections.connections
+    metadata:
+      displayName: Connections
+      description: Number of connections
+      unit: Unspecified
+
+prometheus:
+  - group: rabbitmq metrics
+    interval: 1m
+    featureSet: all
+    dimensions:
+      - key: instance
+        value: $reference(metric:rabbitmq_identity_info, ref:rabbitmq_node)
+    subgroups:
+      # global counters
+      - subgroup: rabbitmq global counter
+        metrics:
+          - key: com.dynatrace.extension.prometheus-rabbitmq.global.global_messages_acknowledged_total
+            value: metric:rabbitmq_global_messages_acknowledged_total
+            type: count
+            featureSet: global
+          - key: com.dynatrace.extension.prometheus-rabbitmq.global.global_messages_confirmed_total
+            value: metric:rabbitmq_global_messages_confirmed_total
+            type: count
+            featureSet: global
+          - key: com.dynatrace.extension.prometheus-rabbitmq.global.global_messages_delivered_consume_auto_ack_total
+            value: metric:rabbitmq_global_messages_delivered_consume_auto_ack_total
+            type: count
+            featureSet: global
+          - key: com.dynatrace.extension.prometheus-rabbitmq.global.global_messages_delivered_consume_manual_ack_total
+            value: metric:rabbitmq_global_messages_delivered_consume_manual_ack_total
+            type: count
+            featureSet: global
+          - key: com.dynatrace.extension.prometheus-rabbitmq.global.global_messages_delivered_get_auto_ack_total
+            value: metric:rabbitmq_global_messages_delivered_get_auto_ack_total
+            type: count
+            featureSet: global
+          - key: com.dynatrace.extension.prometheus-rabbitmq.global.global_messages_delivered_get_manual_ack_total
+            value: metric:rabbitmq_global_messages_delivered_get_manual_ack_total
+            type: count
+            featureSet: global
+          - key: com.dynatrace.extension.prometheus-rabbitmq.global.global_messages_delivered_total
+            value: metric:rabbitmq_global_messages_delivered_total
+            type: count
+            featureSet: global
+          - key: com.dynatrace.extension.prometheus-rabbitmq.global.global_messages_get_empty_total
+            value: metric:rabbitmq_global_messages_get_empty_total
+            type: count
+            featureSet: global
+          - key: com.dynatrace.extension.prometheus-rabbitmq.global.global_messages_received_confirm_total
+            value: metric:rabbitmq_global_messages_received_confirm_total
+            type: count
+            featureSet: global
+          - key: com.dynatrace.extension.prometheus-rabbitmq.global.global_messages_received_total
+            value: metric:rabbitmq_global_messages_received_total
+            type: count
+            featureSet: global
+          - key: com.dynatrace.extension.prometheus-rabbitmq.global.global_messages_redelivered_total
+            value: metric:rabbitmq_global_messages_redelivered_total
+            type: count
+            featureSet: global
+          - key: com.dynatrace.extension.prometheus-rabbitmq.global.global_messages_routed_total
+            value: metric:rabbitmq_global_messages_routed_total
+            type: count
+            featureSet: global
+          - key: com.dynatrace.extension.prometheus-rabbitmq.global.global_messages_unroutable_dropped_total
+            value: metric:rabbitmq_global_messages_unroutable_dropped_total
+            type: count
+            featureSet: global
+          - key: com.dynatrace.extension.prometheus-rabbitmq.global.global_messages_unroutable_returned_total
+            value: metric:rabbitmq_global_messages_unroutable_returned_total
+            type: count
+            featureSet: global
+          - key: com.dynatrace.extension.prometheus-rabbitmq.global.global_publishers
+            value: metric:rabbitmq_global_publishers
+            type: gauge
+            featureSet: global
+          - key: com.dynatrace.extension.prometheus-rabbitmq.global.global_consumers
+            value: metric:rabbitmq_global_consumers
+            type: gauge
+            featureSet: global
+      # generic metrics
+      - subgroup: rabbitmq generic metrics
+        metrics:
+          - key: com.dynatrace.extension.prometheus-rabbitmq.generic.consumer_prefetch
+            value: metric:rabbitmq_consumer_prefetch
+            type: gauge
+            featureSet: generic
+          - key: com.dynatrace.extension.prometheus-rabbitmq.generic.consumers
+            value: metric:rabbitmq_consumers
+            type: gauge
+            featureSet: generic
+          - key: com.dynatrace.extension.prometheus-rabbitmq.generic.disk_space_available_bytes
+            value: metric:rabbitmq_disk_space_available_bytes
+            type: gauge
+            featureSet: generic
+          - key: com.dynatrace.extension.prometheus-rabbitmq.generic.disk_space_available_limit_bytes
+            value: metric:rabbitmq_disk_space_available_limit_bytes
+            type: gauge
+            featureSet: generic
+          - key: com.dynatrace.extension.prometheus-rabbitmq.generic.process_max_fds
+            value: metric:rabbitmq_process_max_fds
+            type: gauge
+            featureSet: generic
+          - key: com.dynatrace.extension.prometheus-rabbitmq.generic.process_max_tcp_sockets
+            value: metric:rabbitmq_process_max_tcp_sockets
+            type: gauge
+            featureSet: generic
+          - key: com.dynatrace.extension.prometheus-rabbitmq.generic.process_open_fds
+            value: metric:rabbitmq_process_open_fds
+            type: gauge
+            featureSet: generic
+          - key: com.dynatrace.extension.prometheus-rabbitmq.generic.process_open_tcp_sockets
+            value: metric:rabbitmq_process_open_tcp_sockets
+            type: gauge
+            featureSet: generic
+          - key: com.dynatrace.extension.prometheus-rabbitmq.generic.process_resident_memory_bytes
+            value: metric:rabbitmq_process_resident_memory_bytes
+            type: gauge
+            featureSet: generic
+          - key: com.dynatrace.extension.prometheus-rabbitmq.generic.resident_memory_limit_bytes
+            value: metric:rabbitmq_resident_memory_limit_bytes
+            type: gauge
+            featureSet: generic
+      # connections metrics
+      - subgroup: rabbitmq connections metrics
+        metrics:
+          - key: com.dynatrace.extension.prometheus-rabbitmq.connections.connection_channels
+            value: metric:rabbitmq_connection_channels
+            type: gauge
+            featureSet: connections
+          - key: com.dynatrace.extension.prometheus-rabbitmq.connections.connection_incoming_bytes_total
+            value: metric:rabbitmq_connection_incoming_bytes_total
+            type: count
+            featureSet: connections
+          - key: com.dynatrace.extension.prometheus-rabbitmq.connections.connection_incoming_packets_total
+            value: metric:rabbitmq_connection_incoming_packets_total
+            type: count
+            featureSet: connections
+          - key: com.dynatrace.extension.prometheus-rabbitmq.connections.connection_outgoing_bytes_total
+            value: metric:rabbitmq_connection_outgoing_bytes_total
+            type: count
+            featureSet: connections
+          - key: com.dynatrace.extension.prometheus-rabbitmq.connections.connection_outgoing_packets_total
+            value: metric:rabbitmq_connection_outgoing_packets_total
+            type: count
+            featureSet: connections
+          - key: com.dynatrace.extension.prometheus-rabbitmq.connections.connection_pending_packets
+            value: metric:rabbitmq_connection_pending_packets
+            type: gauge
+            featureSet: connections
+          - key: com.dynatrace.extension.prometheus-rabbitmq.connections.connection_process_reductions_total
+            value: metric:rabbitmq_connection_process_reductions_total
+            type: count
+            featureSet: connections
+          - key: com.dynatrace.extension.prometheus-rabbitmq.connections.connections
+            value: metric:rabbitmq_connections
+            type: gauge
+            featureSet: connections
+          - key: com.dynatrace.extension.prometheus-rabbitmq.connections.connections_closed_total
+            value: metric:rabbitmq_connections_closed_total
+            type: count
+            featureSet: connections
+          - key: com.dynatrace.extension.prometheus-rabbitmq.connections.connections_opened_total
+            value: metric:rabbitmq_connections_opened_total
+            type: count
+            featureSet: connections
+      # channel metrics
+      - subgroup: rabbitmq channels metrics
+        metrics:
+          - key: com.dynatrace.extension.prometheus-rabbitmq.channels.channel_consumers
+            value: metric:rabbitmq_channel_consumers
+            type: gauge
+            featureSet: channels
+          - key: com.dynatrace.extension.prometheus-rabbitmq.channels.channel_messages_unacked
+            value: metric:rabbitmq_channel_messages_unacked
+            type: gauge
+            featureSet: channels
+          - key: com.dynatrace.extension.prometheus-rabbitmq.channels.channel_messages_uncommitted
+            value: metric:rabbitmq_channel_messages_uncommitted
+            type: gauge
+            featureSet: channels
+          - key: com.dynatrace.extension.prometheus-rabbitmq.channels.channel_acks_uncommitted
+            value: metric:rabbitmq_channel_acks_uncommitted
+            type: gauge
+            featureSet: channels
+          - key: com.dynatrace.extension.prometheus-rabbitmq.channels.channel_process_reductions_total
+            value: metric:rabbitmq_channel_process_reductions_total
+            type: count
+            featureSet: channels
+          - key: com.dynatrace.extension.prometheus-rabbitmq.channels.channel_get_ack_total
+            value: metric:rabbitmq_channel_get_ack_total
+            type: count
+            featureSet: channels
+          - key: com.dynatrace.extension.prometheus-rabbitmq.channels.channel_get_total
+            value: metric:rabbitmq_channel_get_total
+            type: count
+            featureSet: channels
+          - key: com.dynatrace.extension.prometheus-rabbitmq.channels.channel_messages_delivered_ack_total
+            value: metric:rabbitmq_channel_messages_delivered_ack_total
+            type: count
+            featureSet: channels
+          - key: com.dynatrace.extension.prometheus-rabbitmq.channels.channel_messages_delivered_total
+            value: metric:rabbitmq_channel_messages_delivered_total
+            type: count
+            featureSet: channels
+          - key: com.dynatrace.extension.prometheus-rabbitmq.channels.channel_messages_redelivered_total
+            value: metric:rabbitmq_channel_messages_redelivered_total
+            type: count
+            featureSet: channels
+          - key: com.dynatrace.extension.prometheus-rabbitmq.channels.channel_messages_acked_total
+            value: metric:rabbitmq_channel_messages_acked_total
+            type: count
+            featureSet: channels
+          - key: com.dynatrace.extension.prometheus-rabbitmq.channels.channel_get_empty_total
+            value: metric:rabbitmq_channel_get_empty_total
+            type: count
+            featureSet: channels
+          - key: com.dynatrace.extension.prometheus-rabbitmq.channels.channel_prefetch
+            value: metric:rabbitmq_channel_prefetch
+            type: gauge
+            featureSet: channels
+          - key: com.dynatrace.extension.prometheus-rabbitmq.channels.channels
+            value: metric:rabbitmq_channels
+            type: gauge
+            featureSet: channels
+          - key: com.dynatrace.extension.prometheus-rabbitmq.channels.channels_closed_total
+            value: metric:rabbitmq_channels_closed_total
+            type: count
+            featureSet: channels
+          - key: com.dynatrace.extension.prometheus-rabbitmq.channels.channels_opened_total
+            value: metric:rabbitmq_channels_opened_total
+            type: count
+            featureSet: channels
+      # rabbitmq queues metrics
+      - subgroup: rabbitmq queues metrics
+        metrics:
+          - key: com.dynatrace.extension.prometheus-rabbitmq.queues.queue_messages_ready
+            value: metric:rabbitmq_queue_messages_ready
+            type: gauge
+            featureSet: queues
+          - key: com.dynatrace.extension.prometheus-rabbitmq.queues.queue_messages_unacked
+            value: metric:rabbitmq_queue_messages_unacked
+            type: gauge
+            featureSet: queues
+          - key: com.dynatrace.extension.prometheus-rabbitmq.queues.queue_messages
+            value: metric:rabbitmq_queue_messages
+            type: gauge
+            featureSet: queues
+          - key: com.dynatrace.extension.prometheus-rabbitmq.queues.queue_process_reductions_total
+            value: metric:rabbitmq_queue_process_reductions_total
+            type: count
+            featureSet: queues
+          - key: com.dynatrace.extension.prometheus-rabbitmq.queues.queue_consumers
+            value: metric:rabbitmq_queue_consumers
+            type: gauge
+            featureSet: queues
+          - key: com.dynatrace.extension.prometheus-rabbitmq.queues.queue_consumer_utilisation
+            value: metric:rabbitmq_queue_consumer_utilisation
+            type: gauge
+            featureSet: queues
+          - key: com.dynatrace.extension.prometheus-rabbitmq.queues.queue_process_memory_bytes
+            value: metric:rabbitmq_queue_process_memory_bytes
+            type: gauge
+            featureSet: queues
+          - key: com.dynatrace.extension.prometheus-rabbitmq.queues.queue_messages_ram
+            value: metric:rabbitmq_queue_messages_ram
+            type: gauge
+            featureSet: queues
+          - key: com.dynatrace.extension.prometheus-rabbitmq.queues.queue_messages_ram_bytes
+            value: metric:rabbitmq_queue_messages_ram_bytes
+            type: gauge
+            featureSet: queues
+          - key: com.dynatrace.extension.prometheus-rabbitmq.queues.queue_messages_ready_ram
+            value: metric:rabbitmq_queue_messages_ready_ram
+            type: gauge
+            featureSet: queues
+          - key: com.dynatrace.extension.prometheus-rabbitmq.queues.queue_messages_unacked_ram
+            value: metric:rabbitmq_queue_messages_unacked_ram
+            type: gauge
+            featureSet: queues
+          - key: com.dynatrace.extension.prometheus-rabbitmq.queues.queue_messages_persistent
+            value: metric:rabbitmq_queue_messages_persistent
+            type: gauge
+            featureSet: queues
+          - key: com.dynatrace.extension.prometheus-rabbitmq.queues.queue_messages_persistent_bytes
+            value: metric:rabbitmq_queue_messages_persistent_bytes
+            type: gauge
+            featureSet: queues
+          - key: com.dynatrace.extension.prometheus-rabbitmq.queues.queue_messages_bytes
+            value: metric:rabbitmq_queue_messages_bytes
+            type: gauge
+            featureSet: queues
+          - key: com.dynatrace.extension.prometheus-rabbitmq.queues.queue_messages_ready_bytes
+            value: metric:rabbitmq_queue_messages_ready_bytes
+            type: gauge
+            featureSet: queues
+          - key: com.dynatrace.extension.prometheus-rabbitmq.queues.queue_messages_unacked_bytes
+            value: metric:rabbitmq_queue_messages_unacked_bytes
+            type: gauge
+            featureSet: queues
+          - key: com.dynatrace.extension.prometheus-rabbitmq.queues.queue_messages_paged_out
+            value: metric:rabbitmq_queue_messages_paged_out
+            type: gauge
+            featureSet: queues
+          - key: com.dynatrace.extension.prometheus-rabbitmq.queues.queue_messages_paged_out_bytes
+            value: metric:rabbitmq_queue_messages_paged_out_bytes
+            type: gauge
+            featureSet: queues
+          - key: com.dynatrace.extension.prometheus-rabbitmq.queues.queue_disk_reads_total
+            value: metric:rabbitmq_queue_disk_reads_total
+            type: count
+            featureSet: queues
+          - key: com.dynatrace.extension.prometheus-rabbitmq.queues.queue_disk_writes_total
+            value: metric:rabbitmq_queue_disk_writes_total
+            type: count
+            featureSet: queues
+          - key: com.dynatrace.extension.prometheus-rabbitmq.queues.queues
+            value: metric:rabbitmq_queues
+            type: gauge
+            featureSet: queues
+          - key: com.dynatrace.extension.prometheus-rabbitmq.queues.queues_created_total
+            value: metric:rabbitmq_queues_created_total
+            type: count
+            featureSet: queues
+          - key: com.dynatrace.extension.prometheus-rabbitmq.queues.queues_declared_total
+            value: metric:rabbitmq_queues_declared_total
+            type: count
+            featureSet: queues
+          - key: com.dynatrace.extension.prometheus-rabbitmq.queues.queues_deleted_total
+            value: metric:rabbitmq_queues_deleted_total
+            type: count
+            featureSet: queues
+      # Erlang via RabbitMQ
+      - subgroup: rabbitmq erlang metrics
+        metrics:
+          - key: com.dynatrace.extension.prometheus-rabbitmq.erlang.erlang_processes_used
+            value: metric:rabbitmq_erlang_processes_used
+            type: gauge
+            featureSet: erlang
+          - key: com.dynatrace.extension.prometheus-rabbitmq.erlang.erlang_gc_runs_total
+            value: metric:rabbitmq_erlang_gc_runs_total
+            type: count
+            featureSet: erlang
+          - key: com.dynatrace.extension.prometheus-rabbitmq.erlang.erlang_gc_reclaimed_bytes_totalTotal
+            value: metric:rabbitmq_erlang_gc_reclaimed_bytes_totalTotal
+            type: count
+            featureSet: erlang
+          - key: com.dynatrace.extension.prometheus-rabbitmq.erlang.erlang_scheduler_context_switches_total
+            value: metric:rabbitmq_erlang_scheduler_context_switches_total
+            type: count
+            featureSet: erlang
+          - key: com.dynatrace.extension.prometheus-rabbitmq.erlang.erlang_processes_limit
+            value: metric:rabbitmq_erlang_processes_limit
+            type: gauge
+            featureSet: erlang
+          - key: com.dynatrace.extension.prometheus-rabbitmq.erlang.erlang_scheduler_run_queue
+            value: metric:rabbitmq_erlang_scheduler_run_queue
+            type: gauge
+            featureSet: erlang
+          - key: com.dynatrace.extension.prometheus-rabbitmq.erlang.erlang_net_ticktime_seconds
+            value: metric:rabbitmq_erlang_net_ticktime_seconds
+            type: gauge
+            featureSet: erlang
+          - key: com.dynatrace.extension.prometheus-rabbitmq.erlang.erlang_uptime_seconds
+            value: metric:rabbitmq_erlang_uptime_seconds
+            type: gauge
+            featureSet: erlang
+        #disk metrics
+      - subgroup: rabbitmq disk metrics
+        metrics:
+          - key: com.dynatrace.extension.prometheus-rabbitmq.disk.io_read_ops_total
+            value: metric:rabbitmq_io_read_ops_total
+            type: count
+            featureSet: disk
+          - key: com.dynatrace.extension.prometheus-rabbitmq.disk.io_read_bytes_total
+            value: metric:rabbitmq_io_read_bytes_total
+            type: count
+            featureSet: disk
+          - key: com.dynatrace.extension.prometheus-rabbitmq.disk.io_write_ops_total
+            value: metric:rabbitmq_io_write_ops_total
+            type: count
+            featureSet: disk
+          - key: com.dynatrace.extension.prometheus-rabbitmq.disk.io_write_bytes_total
+            value: metric:rabbitmq_io_write_bytes_total
+            type: count
+            featureSet: disk
+          - key: com.dynatrace.extension.prometheus-rabbitmq.disk.io_sync_ops_total
+            value: metric:rabbitmq_io_sync_ops_total
+            type: count
+            featureSet: disk
+          - key: com.dynatrace.extension.prometheus-rabbitmq.disk.io_seek_ops_total
+            value: metric:rabbitmq_io_seek_ops_total
+            type: count
+            featureSet: disk
+          - key: com.dynatrace.extension.prometheus-rabbitmq.disk.io_open_attempt_ops_total
+            value: metric:rabbitmq_io_open_attempt_ops_total
+            type: count
+            featureSet: disk
+          - key: com.dynatrace.extension.prometheus-rabbitmq.disk.io_reopen_ops_total
+            value: metric:rabbitmq_io_reopen_ops_total
+            type: count
+            featureSet: disk
+          - key: com.dynatrace.extension.prometheus-rabbitmq.disk.schema_db_ram_tx_total
+            value: metric:rabbitmq_schema_db_ram_tx_total
+            type: count
+            featureSet: disk
+          - key: com.dynatrace.extension.prometheus-rabbitmq.disk.schema_db_disk_tx_total
+            value: metric:rabbitmq_schema_db_disk_tx_total
+            type: count
+            featureSet: disk
+          - key: com.dynatrace.extension.prometheus-rabbitmq.disk.msg_store_read_total
+            value: metric:rabbitmq_msg_store_read_total
+            type: count
+            featureSet: disk
+          - key: com.dynatrace.extension.prometheus-rabbitmq.disk.msg_store_write_total
+            value: metric:rabbitmq_msg_store_write_total
+            type: count
+            featureSet: disk
+          - key: com.dynatrace.extension.prometheus-rabbitmq.disk.queue_index_read_ops_total
+            value: metric:rabbitmq_queue_index_read_ops_total
+            type: count
+            featureSet: disk
+          - key: com.dynatrace.extension.prometheus-rabbitmq.disk.queue_index_write_ops_total
+            value: metric:rabbitmq_queue_index_write_ops_total
+            type: count
+            featureSet: disk
+          - key: com.dynatrace.extension.prometheus-rabbitmq.disk.queue_index_journal_write_ops_total
+            value: metric:rabbitmq_queue_index_journal_write_ops_total
+            type: count
+            featureSet: disk
+          - key: com.dynatrace.extension.prometheus-rabbitmq.disk.io_read_time_seconds_total
+            value: metric:rabbitmq_io_read_time_seconds_total
+            type: count
+            featureSet: disk
+          - key: com.dynatrace.extension.prometheus-rabbitmq.disk.io_write_time_seconds_total
+            value: metric:rabbitmq_io_write_time_seconds_total
+            type: count
+            featureSet: disk
+          - key: com.dynatrace.extension.prometheus-rabbitmq.disk.io_sync_time_seconds_total
+            value: metric:rabbitmq_io_sync_time_seconds_total
+            type: count
+            featureSet: disk
+          - key: com.dynatrace.extension.prometheus-rabbitmq.disk.io_seek_time_seconds_total
+            value: metric:rabbitmq_io_seek_time_seconds_total
+            type: count
+            featureSet: disk
+          - key: com.dynatrace.extension.prometheus-rabbitmq.disk.io_open_attempt_time_seconds_total
+            value: metric:rabbitmq_io_open_attempt_time_seconds_total
+            type: count
+            featureSet: disk
+        #raft metrics
+      - subgroup: rabbitmq raft metrics
+        metrics:
+          - key: com.dynatrace.extension.prometheus-rabbitmq.raft.term_total
+            value: metric:rabbitmq_raft_term_total
+            type: count
+            featureSet: raft
+          - key: com.dynatrace.extension.prometheus-rabbitmq.raft.log_snapshot_index
+            value: metric:rabbitmq_raft_log_snapshot_index
+            type: gauge
+            featureSet: raft
+          - key: com.dynatrace.extension.prometheus-rabbitmq.raft.log_last_applied_index
+            value: metric:rabbitmq_raft_log_last_applied_index
+            type: gauge
+            featureSet: raft
+          - key: com.dynatrace.extension.prometheus-rabbitmq.raft.log_commit_index
+            value: metric:rabbitmq_raft_log_commit_index
+            type: gauge
+            featureSet: raft
+          - key: com.dynatrace.extension.prometheus-rabbitmq.raft.log_last_written_index
+            value: metric:rabbitmq_raft_log_last_written_index
+            type: gauge
+            featureSet: raft
+          - key: com.dynatrace.extension.prometheus-rabbitmq.raft.entry_commit_latency_seconds
+            value: metric:rabbitmq_raft_entry_commit_latency_seconds
+            type: gauge
+            featureSet: raft
+
+topology:
+  types:
+    - name: prometheus:com_dynatrace_extension_prometheus-rabbitmq_host
+      displayName: Host
+      enabled: true
+      rules:
+        - idPattern: prometheus_prometheus-rabbitmq_{dt.entity.host}
+          sources:
+            - sourceType: Metrics
+              condition: $prefix(com.dynatrace.extension.prometheus-rabbitmq)
+          attributes: []
+          requiredDimensions: []
+          instanceNamePattern: Rabbitmq on {dt.entity.host}
+        - idPattern: prometheus_prometheus-rabbitmq_{device.address}
+          sources:
+            - sourceType: Metrics
+              condition: $prefix(com.dynatrace.extension.prometheus-rabbitmq)
+          attributes: []
+          requiredDimensions: []
+          instanceNamePattern: Rabbitmq on {device.address}
+    - name: prometheus:com_dynatrace_extension_prometheus-rabbitmq_instance
+      displayName: RabbitMQ Instance
+      enabled: true
+      rules:
+        - idPattern: prometheus_prometheus-rabbitmq_{dt.entity.host}_{instance}
+          sources:
+            - sourceType: Metrics
+              condition: $prefix(com.dynatrace.extension.prometheus-rabbitmq)
+          attributes:
+            - pattern: '{instance}'
+              key: instance
+              displayName: Name
+          requiredDimensions: []
+          instanceNamePattern: RabbitMQ {instance} on {dt.entity.host}
+        - idPattern: prometheus_prometheus-rabbitmq_{device.address}_{instance}
+          sources:
+            - sourceType: Metrics
+              condition: $prefix(com.dynatrace.extension.prometheus-rabbitmq)
+          attributes:
+            - pattern: '{instance}'
+              key: instance
+              displayName: Name
+          requiredDimensions: []
+          instanceNamePattern: RabbitMQ {instance} on {device.address}
+        - idPattern: prometheus_prometheus-rabbitmq_{instance}_{instance}
+          sources:
+            - sourceType: Metrics
+              condition: $prefix(com.dynatrace.extension.prometheus-rabbitmq)
+          attributes:
+            - pattern: '{instance}'
+              key: instance
+              displayName: Name
+          requiredDimensions: []
+          instanceNamePattern: RabbitMQ {instance}
+  relationships:
+    - typeOfRelation: CHILD_OF
+      fromType: prometheus:com_dynatrace_extension_prometheus-rabbitmq_instance
+      toType: prometheus:com_dynatrace_extension_prometheus-rabbitmq_host
+      enabled: true
+      sources:
+        - sourceType: Metrics
+          condition: $prefix(com.dynatrace.extension.prometheus-rabbitmq)
+    - typeOfRelation: RUNS_ON
+      fromType: prometheus:com_dynatrace_extension_prometheus-rabbitmq_host
+      toType: host
+      enabled: true
+      sources:
+        - sourceType: Metrics
+          condition: $prefix(com.dynatrace.extension.prometheus-rabbitmq)
+
+screens:
+  - entityType: prometheus:com_dynatrace_extension_prometheus-rabbitmq_host
+    propertiesCard:
+      properties:
+        - type: RELATION
+          relation:
+            entitySelectorTemplate: type(host), toRelationships.runsOn($(entityConditions))
+            displayName: Host
+    detailsSettings:
+      staticContent:
+        showProblems: true
+        showProperties: true
+        showTags: true
+        showGlobalFilter: true
+        showAddTag: true
+      layout:
+        autoGenerate: false
+        cards:
+          - type: "ENTITIES_LIST"
+            key: "instance"
+          - type: "CHART_GROUP"
+            key: "instance_messages"
+          - type: "CHART_GROUP"
+            key: "instance_overview"
+          - type: "CHART_GROUP"
+            key: "instance_memory"
+          - type: "CHART_GROUP"
+            key: "instance_queued_messages"
+          - type: "CHART_GROUP"
+            key: "instance_outgoing_messages"
+          - type: "CHART_GROUP"
+            key: "instance_queues"
+          - type: "CHART_GROUP"
+            key: "instance_channels"
+          - type: "CHART_GROUP"
+            key: "instance_connections"
+    entitiesListCards:
+      - key: "instance"
+        displayName: "Instances"
+        entitySelectorTemplate: "type(prometheus:com_dynatrace_extension_prometheus-rabbitmq_instance), fromRelationships.isChildOf($(entityConditions))"
+        pageSize: 5
+        displayCharts: false
+        displayIcons: true
+        enableDetailsExpandability: true
+        numberOfVisibleCharts: 1
+    chartsCards:
+      - key: "instance_messages"
+        displayName: "Messages"
+        numberOfVisibleCharts: 2
+        charts:
+          - displayName: "Ready messages"
+            visualization:
+              themeColor: BLUE
+              seriesType: AREA
+            metrics:
+              - metricSelector: "com.dynatrace.extension.prometheus-rabbitmq.queues.queue_messages_ready:splitBy():sum:auto:sort(value(sum,descending)):limit(10)"
+          - displayName: "Unacknowledged messages"
+            visualization:
+              themeColor: PURPLE
+              seriesType: AREA
+            metrics:
+              - metricSelector: "com.dynatrace.extension.prometheus-rabbitmq.queues.queue_messages_unacked:splitBy():sum:auto:sort(value(sum,descending)):limit(1)"
+          - displayName: "Outgoing messages / s"
+            visualization:
+              themeColor: ROYALBLUE
+              seriesType: AREA
+            metrics:
+              - metricSelector: "func:com.dynatrace.extension.prometheus-rabbitmq.channels.channel_outgoing_messages.persec:splitBy():sum:auto:sort(value(sum,descending)):limit(10)"
+      - key: "instance_overview"
+        displayName: "Details"
+        numberOfVisibleCharts: 2
+        charts:
+          - displayName: "Publishers"
+            visualization:
+              themeColor: BLUE
+              seriesType: AREA
+            metrics:
+              - metricSelector: "func:com.dynatrace.extension.prometheus-rabbitmq.channels.publishers:splitBy():sum:auto:sort(value(sum,descending)):limit(1)"
+          - displayName: "Connections"
+            visualization:
+              themeColor: PURPLE
+              seriesType: AREA
+            metrics:
+              - metricSelector: "com.dynatrace.extension.prometheus-rabbitmq.connections.connections:splitBy():sum:auto:sort(value(sum,descending)):limit(10)"
+          - displayName: "Queues"
+            visualization:
+              themeColor: ROYALBLUE
+              seriesType: AREA
+            metrics:
+              - metricSelector: "com.dynatrace.extension.prometheus-rabbitmq.queues.queues:splitBy():sum:auto:sort(value(sum,descending)):limit(10)"
+          - displayName: "Consumers"
+            visualization:
+              themeColor: BLUE
+              seriesType: AREA
+            metrics:
+              - metricSelector: "com.dynatrace.extension.prometheus-rabbitmq.channels.channel_consumers:splitBy():sum:auto:sort(value(sum,descending)):limit(1)"
+          - displayName: "Channels"
+            visualization:
+              themeColor: PURPLE
+              seriesType: AREA
+            metrics:
+              - metricSelector: "com.dynatrace.extension.prometheus-rabbitmq.channels.channels:splitBy():sum:auto:sort(value(sum,descending)):limit(1)"
+      - key: "instance_memory"
+        displayName: "Memory"
+        numberOfVisibleCharts: 2
+        charts:
+          - displayName: "Memory available before publishers blocked"
+            visualization:
+              themeColor: DEFAULT
+              seriesType: AREA
+            metrics:
+              - metricSelector: "func:com.dynatrace.extension.prometheus-rabbitmq.generic.memory_available_before_publishers_blocked:splitBy():sum:auto:sort(value(sum,descending)):limit(10)"
+          - displayName: "Disk space available before publishers blocked"
+            visualization:
+              themeColor: BLUE
+              seriesType: AREA
+            metrics:
+              - metricSelector: "com.dynatrace.extension.prometheus-rabbitmq.generic.disk_space_available_bytes:splitBy():sum:auto:sort(value(sum,descending)):limit(10)"
+          - displayName: "File descriptors available"
+            visualization:
+              themeColor: PURPLE
+              seriesType: AREA
+            metrics:
+              - metricSelector: "com.dynatrace.extension.prometheus-rabbitmq.generic.fds_available:splitBy():sum:auto:sort(value(sum,descending)):limit(10)"
+          - displayName: "TCP Sockets available"
+            visualization:
+              themeColor: ROYALBLUE
+              seriesType: AREA
+            metrics:
+              - metricSelector: "com.dynatrace.extension.prometheus-rabbitmq.tcp_sockets_available:splitBy():sum:auto:sort(value(sum,descending)):limit(10)"
+      - key: "instance_queued_messages"
+        displayName: "Queued messages"
+        numberOfVisibleCharts: 2
+        charts:
+          - displayName: "Messages ready to be delivered to consumers"
+            visualization:
+              themeColor: DEFAULT
+              seriesType: AREA
+            metrics:
+              - metricSelector: "com.dynatrace.extension.prometheus-rabbitmq.queues.queue_messages_ready:splitBy():sum:auto:sort(value(sum,descending)):limit(20)"
+          - displayName: "Messages pending consumer acknowledgement"
+            visualization:
+              themeColor: BLUE
+              seriesType: AREA
+            metrics:
+              - metricSelector: "com.dynatrace.extension.prometheus-rabbitmq.queues.queue_messages_unacked:splitBy():sum:auto:sort(value(sum,descending)):limit(20)"
+      - key: "instance_outgoing_messages"
+        displayName: "Outgoing messages"
+        numberOfVisibleCharts: 3
+        charts:
+          - displayName: "Messages delivered / s"
+            visualization:
+              themeColor: DEFAULT
+              seriesType: AREA
+            metrics:
+              - metricSelector: "func:com.dynatrace.extension.prometheus-rabbitmq.channels.channel_messages_delivered.persec:splitBy():sum:auto:sort(value(sum,descending)):limit(10)"
+          - displayName: "Messages redelivered / s"
+            visualization:
+              themeColor: BLUE
+              seriesType: AREA
+            metrics:
+              - metricSelector: "func:com.dynatrace.extension.prometheus-rabbitmq.channels.channel_messages_redelivered_total.persec:splitBy():sum:auto:sort(value(sum,descending)):limit(10)"
+          - displayName: "Messages delivered with manual ack / s"
+            visualization:
+              themeColor: PURPLE
+              seriesType: AREA
+            metrics:
+              - metricSelector: "func:com.dynatrace.extension.prometheus-rabbitmq.channels.channel_messages_delivered_ack_total.persec:splitBy():sum:auto:sort(value(sum,descending)):limit(10)"
+          - displayName: "Messages delivered auto ack / s"
+            visualization:
+              themeColor: ROYALBLUE
+              seriesType: AREA
+            metrics:
+              - metricSelector: "func:com.dynatrace.extension.prometheus-rabbitmq.channels.channel_messages_delivered_total.persec:splitBy():sum:auto:sort(value(sum,descending)):limit(10)"
+          - displayName: "Messages acknowledged / s"
+            visualization:
+              themeColor: DEFAULT
+              seriesType: AREA
+            metrics:
+              - metricSelector: "func:com.dynatrace.extension.prometheus-rabbitmq.channels.channel_messages_acked_total.persec:splitBy():sum:auto:sort(value(sum,descending)):limit(10)"
+          - displayName: "Polling operations with auto ack / s"
+            visualization:
+              themeColor: BLUE
+              seriesType: AREA
+            metrics:
+              - metricSelector: "func:com.dynatrace.extension.prometheus-rabbitmq.channels.channel_get_total.persec:splitBy():sum:auto:sort(value(sum,descending)):limit(10)"
+          - displayName: "Polling operations that yield no result / s"
+            visualization:
+              themeColor: PURPLE
+              seriesType: AREA
+            metrics:
+              - metricSelector: "func:com.dynatrace.extension.prometheus-rabbitmq.channels.channel_get_empty_total.persec:splitBy():sum:auto:sort(value(sum,descending)):limit(10)"
+          - displayName: "Polling operations with manual ack / s"
+            visualization:
+              themeColor: ROYALBLUE
+              seriesType: AREA
+            metrics:
+              - metricSelector: "func:com.dynatrace.extension.prometheus-rabbitmq.channels.channel_get_ack_total.persec:splitBy():sum:auto:sort(value(sum,descending)):limit(10)"
+      - key: "instance_queues"
+        displayName: "Queues"
+        numberOfVisibleCharts: 4
+        charts:
+          - displayName: "Total queues"
+            visualization:
+              themeColor: DEFAULT
+              seriesType: AREA
+            metrics:
+              - metricSelector: "com.dynatrace.extension.prometheus-rabbitmq.queues.queues:splitBy():sum:auto:sort(value(sum,descending)):limit(20)"
+          - displayName: "Queues declared / s"
+            visualization:
+              themeColor: BLUE
+              seriesType: AREA
+            metrics:
+              - metricSelector: "func:com.dynatrace.extension.prometheus-rabbitmq.queues.queues_declared_total.persec:splitBy():sum:auto:sort(value(sum,descending)):limit(10)"
+          - displayName: "Queues created / s"
+            visualization:
+              themeColor: PURPLE
+              seriesType: AREA
+            metrics:
+              - metricSelector: "func:com.dynatrace.extension.prometheus-rabbitmq.queues.queues_created_total.persec:splitBy():sum:auto:sort(value(sum,descending)):limit(10)"
+          - displayName: "Queues deleted / s"
+            visualization:
+              themeColor: ROYALBLUE
+              seriesType: AREA
+            metrics:
+              - metricSelector: "func:com.dynatrace.extension.prometheus-rabbitmq.queues.queues_deleted_total.persec:splitBy():sum:auto:sort(value(sum,descending)):limit(10)"
+      - key: "instance_channels"
+        displayName: "Channels"
+        numberOfVisibleCharts: 3
+        charts:
+          - displayName: "Total channels"
+            visualization:
+              themeColor: DEFAULT
+              seriesType: AREA
+            metrics:
+              - metricSelector: "com.dynatrace.extension.prometheus-rabbitmq.channels.channels:splitBy():sum:auto:sort(value(sum,descending)):limit(20)"
+          - displayName: "Channels opened / s"
+            visualization:
+              themeColor: BLUE
+              seriesType: AREA
+            metrics:
+              - metricSelector: "func:com.dynatrace.extension.prometheus-rabbitmq.channels.channels_opened_total.persec:splitBy():sum:auto:sort(value(sum,descending)):limit(10)"
+          - displayName: "Channels closed / s"
+            visualization:
+              themeColor: PURPLE
+              seriesType: AREA
+            metrics:
+              - metricSelector: "func:com.dynatrace.extension.prometheus-rabbitmq.channels.channels_closed_total.persec:splitBy():sum:auto:sort(value(sum,descending)):limit(10)"
+      - key: "instance_connections"
+        displayName: "Connections"
+        numberOfVisibleCharts: 3
+        charts:
+          - displayName: "Total connections"
+            visualization:
+              themeColor: DEFAULT
+              seriesType: AREA
+            metrics:
+              - metricSelector: "com.dynatrace.extension.prometheus-rabbitmq.connections.connections:splitBy():sum:auto:sort(value(sum,descending)):limit(20)"
+          - displayName: "Connections opened / s"
+            visualization:
+              themeColor: BLUE
+              seriesType: AREA
+            metrics:
+              - metricSelector: "func:com.dynatrace.extension.prometheus-rabbitmq.connections.connections_opened_total.persec:splitBy():sum:auto:sort(value(sum,descending)):limit(10)"
+          - displayName: "Connections closed / s"
+            visualization:
+              themeColor: PURPLE
+              seriesType: AREA
+            metrics:
+              - metricSelector: "func:com.dynatrace.extension.prometheus-rabbitmq.connections.connections_closed_total.persec:splitBy():sum:auto:sort(value(sum,descending)):limit(10)"
+  - entityType: prometheus:com_dynatrace_extension_prometheus-rabbitmq_instance
+    propertiesCard:
+      properties:
+        - type: ATTRIBUTE
+          attribute:
+            key: instance
+            displayName: Name
+        - type: RELATION
+          relation:
+            entitySelectorTemplate: type(host), toRelationships.runsOn($(entityConditions))
+            displayName: Host
+    detailsSettings:
+      staticContent:
+        showProblems: true
+        showProperties: true
+        showTags: true
+        showGlobalFilter: true
+        showAddTag: true
+      layout:
+        autoGenerate: false
+        cards:
+          - type: "CHART_GROUP"
+            key: "instance_messages"
+          - type: "CHART_GROUP"
+            key: "instance_overview"
+          - type: "CHART_GROUP"
+            key: "instance_memory"
+          - type: "CHART_GROUP"
+            key: "instance_queued_messages"
+          - type: "CHART_GROUP"
+            key: "instance_outgoing_messages"
+          - type: "CHART_GROUP"
+            key: "instance_queues"
+          - type: "CHART_GROUP"
+            key: "instance_channels"
+          - type: "CHART_GROUP"
+            key: "instance_connections"
+    chartsCards:
+      - key: "instance_messages"
+        displayName: "Messages"
+        numberOfVisibleCharts: 2
+        charts:
+          - displayName: "Ready messages"
+            visualization:
+              themeColor: BLUE
+              seriesType: AREA
+            metrics:
+              - metricSelector: "com.dynatrace.extension.prometheus-rabbitmq.queues.queue_messages_ready:splitBy():sum:auto:sort(value(sum,descending)):limit(10)"
+          - displayName: "Unacknowledged messages"
+            visualization:
+              themeColor: PURPLE
+              seriesType: AREA
+            metrics:
+              - metricSelector: "com.dynatrace.extension.prometheus-rabbitmq.queues.queue_messages_unacked:splitBy():sum:auto:sort(value(sum,descending)):limit(1)"
+          - displayName: "Outgoing messages / s"
+            visualization:
+              themeColor: ROYALBLUE
+              seriesType: AREA
+            metrics:
+              - metricSelector: "func:com.dynatrace.extension.prometheus-rabbitmq.channels.channel_outgoing_messages.persec:splitBy():sum:auto:sort(value(sum,descending)):limit(10)"
+      - key: "instance_overview"
+        displayName: "Details"
+        numberOfVisibleCharts: 2
+        charts:
+          - displayName: "Publishers"
+            visualization:
+              themeColor: BLUE
+              seriesType: AREA
+            metrics:
+              - metricSelector: "func:com.dynatrace.extension.prometheus-rabbitmq.channels.publishers:splitBy():sum:auto:sort(value(sum,descending)):limit(1)"
+          - displayName: "Connections"
+            visualization:
+              themeColor: PURPLE
+              seriesType: AREA
+            metrics:
+              - metricSelector: "com.dynatrace.extension.prometheus-rabbitmq.connections.connections:splitBy():sum:auto:sort(value(sum,descending)):limit(10)"
+          - displayName: "Queues"
+            visualization:
+              themeColor: ROYALBLUE
+              seriesType: AREA
+            metrics:
+              - metricSelector: "com.dynatrace.extension.prometheus-rabbitmq.queues.queues:splitBy():sum:auto:sort(value(sum,descending)):limit(10)"
+          - displayName: "Consumers"
+            visualization:
+              themeColor: BLUE
+              seriesType: AREA
+            metrics:
+              - metricSelector: "com.dynatrace.extension.prometheus-rabbitmq.channels.channel_consumers:splitBy():sum:auto:sort(value(sum,descending)):limit(1)"
+          - displayName: "Channels"
+            visualization:
+              themeColor: PURPLE
+              seriesType: AREA
+            metrics:
+              - metricSelector: "com.dynatrace.extension.prometheus-rabbitmq.channels.channels:splitBy():sum:auto:sort(value(sum,descending)):limit(1)"
+      - key: "instance_memory"
+        displayName: "Memory"
+        numberOfVisibleCharts: 2
+        charts:
+          - displayName: "Memory available before publishers blocked"
+            visualization:
+              themeColor: DEFAULT
+              seriesType: AREA
+            metrics:
+              - metricSelector: "func:com.dynatrace.extension.prometheus-rabbitmq.generic.memory_available_before_publishers_blocked:splitBy():sum:auto:sort(value(sum,descending)):limit(10)"
+          - displayName: "Disk space available before publishers blocked"
+            visualization:
+              themeColor: BLUE
+              seriesType: AREA
+            metrics:
+              - metricSelector: "com.dynatrace.extension.prometheus-rabbitmq.generic.disk_space_available_bytes:splitBy():sum:auto:sort(value(sum,descending)):limit(10)"
+          - displayName: "File descriptors available"
+            visualization:
+              themeColor: PURPLE
+              seriesType: AREA
+            metrics:
+              - metricSelector: "com.dynatrace.extension.prometheus-rabbitmq.generic.fds_available:splitBy():sum:auto:sort(value(sum,descending)):limit(10)"
+          - displayName: "TCP Sockets available"
+            visualization:
+              themeColor: ROYALBLUE
+              seriesType: AREA
+            metrics:
+              - metricSelector: "com.dynatrace.extension.prometheus-rabbitmq.tcp_sockets_available:splitBy():sum:auto:sort(value(sum,descending)):limit(10)"
+      - key: "instance_queued_messages"
+        displayName: "Queued messages"
+        numberOfVisibleCharts: 2
+        charts:
+          - displayName: "Messages ready to be delivered to consumers"
+            visualization:
+              themeColor: DEFAULT
+              seriesType: AREA
+            metrics:
+              - metricSelector: "com.dynatrace.extension.prometheus-rabbitmq.queues.queue_messages_ready:splitBy():sum:auto:sort(value(sum,descending)):limit(20)"
+          - displayName: "Messages pending consumer acknowledgement"
+            visualization:
+              themeColor: BLUE
+              seriesType: AREA
+            metrics:
+              - metricSelector: "com.dynatrace.extension.prometheus-rabbitmq.queues.queue_messages_unacked:splitBy():sum:auto:sort(value(sum,descending)):limit(20)"
+      - key: "instance_outgoing_messages"
+        displayName: "Outgoing messages"
+        numberOfVisibleCharts: 3
+        charts:
+          - displayName: "Messages delivered / s"
+            visualization:
+              themeColor: DEFAULT
+              seriesType: AREA
+            metrics:
+              - metricSelector: "func:com.dynatrace.extension.prometheus-rabbitmq.channels.channel_messages_delivered.persec:splitBy():sum:auto:sort(value(sum,descending)):limit(10)"
+          - displayName: "Messages redelivered / s"
+            visualization:
+              themeColor: BLUE
+              seriesType: AREA
+            metrics:
+              - metricSelector: "func:com.dynatrace.extension.prometheus-rabbitmq.channels.channel_messages_redelivered_total.persec:splitBy():sum:auto:sort(value(sum,descending)):limit(10)"
+          - displayName: "Messages delivered with manual ack / s"
+            visualization:
+              themeColor: PURPLE
+              seriesType: AREA
+            metrics:
+              - metricSelector: "func:com.dynatrace.extension.prometheus-rabbitmq.channels.channel_messages_delivered_ack_total.persec:splitBy():sum:auto:sort(value(sum,descending)):limit(10)"
+          - displayName: "Messages delivered auto ack / s"
+            visualization:
+              themeColor: ROYALBLUE
+              seriesType: AREA
+            metrics:
+              - metricSelector: "func:com.dynatrace.extension.prometheus-rabbitmq.channels.channel_messages_delivered_total.persec:splitBy():sum:auto:sort(value(sum,descending)):limit(10)"
+          - displayName: "Messages acknowledged / s"
+            visualization:
+              themeColor: DEFAULT
+              seriesType: AREA
+            metrics:
+              - metricSelector: "func:com.dynatrace.extension.prometheus-rabbitmq.channels.channel_messages_acked_total.persec:splitBy():sum:auto:sort(value(sum,descending)):limit(10)"
+          - displayName: "Polling operations with auto ack / s"
+            visualization:
+              themeColor: BLUE
+              seriesType: AREA
+            metrics:
+              - metricSelector: "func:com.dynatrace.extension.prometheus-rabbitmq.channels.channel_get_total.persec:splitBy():sum:auto:sort(value(sum,descending)):limit(10)"
+          - displayName: "Polling operations that yield no result / s"
+            visualization:
+              themeColor: PURPLE
+              seriesType: AREA
+            metrics:
+              - metricSelector: "func:com.dynatrace.extension.prometheus-rabbitmq.channels.channel_get_empty_total.persec:splitBy():sum:auto:sort(value(sum,descending)):limit(10)"
+          - displayName: "Polling operations with manual ack / s"
+            visualization:
+              themeColor: ROYALBLUE
+              seriesType: AREA
+            metrics:
+              - metricSelector: "func:com.dynatrace.extension.prometheus-rabbitmq.channels.channel_get_ack_total.persec:splitBy():sum:auto:sort(value(sum,descending)):limit(10)"
+      - key: "instance_queues"
+        displayName: "Queues"
+        numberOfVisibleCharts: 4
+        charts:
+          - displayName: "Total queues"
+            visualization:
+              themeColor: DEFAULT
+              seriesType: AREA
+            metrics:
+              - metricSelector: "com.dynatrace.extension.prometheus-rabbitmq.queues.queues:splitBy():sum:auto:sort(value(sum,descending)):limit(20)"
+          - displayName: "Queues declared / s"
+            visualization:
+              themeColor: BLUE
+              seriesType: AREA
+            metrics:
+              - metricSelector: "func:com.dynatrace.extension.prometheus-rabbitmq.queues.queues_declared_total.persec:splitBy():sum:auto:sort(value(sum,descending)):limit(10)"
+          - displayName: "Queues created / s"
+            visualization:
+              themeColor: PURPLE
+              seriesType: AREA
+            metrics:
+              - metricSelector: "func:com.dynatrace.extension.prometheus-rabbitmq.queues.queues_created_total.persec:splitBy():sum:auto:sort(value(sum,descending)):limit(10)"
+          - displayName: "Queues deleted / s"
+            visualization:
+              themeColor: ROYALBLUE
+              seriesType: AREA
+            metrics:
+              - metricSelector: "func:com.dynatrace.extension.prometheus-rabbitmq.queues.queues_deleted_total.persec:splitBy():sum:auto:sort(value(sum,descending)):limit(10)"
+      - key: "instance_channels"
+        displayName: "Channels"
+        numberOfVisibleCharts: 3
+        charts:
+          - displayName: "Total channels"
+            visualization:
+              themeColor: DEFAULT
+              seriesType: AREA
+            metrics:
+              - metricSelector: "com.dynatrace.extension.prometheus-rabbitmq.channels.channels:splitBy():sum:auto:sort(value(sum,descending)):limit(20)"
+          - displayName: "Channels opened / s"
+            visualization:
+              themeColor: BLUE
+              seriesType: AREA
+            metrics:
+              - metricSelector: "func:com.dynatrace.extension.prometheus-rabbitmq.channels.channels_opened_total.persec:splitBy():sum:auto:sort(value(sum,descending)):limit(10)"
+          - displayName: "Channels closed / s"
+            visualization:
+              themeColor: PURPLE
+              seriesType: AREA
+            metrics:
+              - metricSelector: "func:com.dynatrace.extension.prometheus-rabbitmq.channels.channels_closed_total.persec:splitBy():sum:auto:sort(value(sum,descending)):limit(10)"
+      - key: "instance_connections"
+        displayName: "Connections"
+        numberOfVisibleCharts: 3
+        charts:
+          - displayName: "Total connections"
+            visualization:
+              themeColor: DEFAULT
+              seriesType: AREA
+            metrics:
+              - metricSelector: "com.dynatrace.extension.prometheus-rabbitmq.connections.connections:splitBy():sum:auto:sort(value(sum,descending)):limit(20)"
+          - displayName: "Connections opened / s"
+            visualization:
+              themeColor: BLUE
+              seriesType: AREA
+            metrics:
+              - metricSelector: "func:com.dynatrace.extension.prometheus-rabbitmq.connections.connections_opened_total.persec:splitBy():sum:auto:sort(value(sum,descending)):limit(10)"
+          - displayName: "Connections closed / s"
+            visualization:
+              themeColor: PURPLE
+              seriesType: AREA
+            metrics:
+              - metricSelector: "func:com.dynatrace.extension.prometheus-rabbitmq.connections.connections_closed_total.persec:splitBy():sum:auto:sort(value(sum,descending)):limit(10)"

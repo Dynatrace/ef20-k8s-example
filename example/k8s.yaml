@@ -1,0 +1,366 @@
+apiVersion: v1
+items:
+  - apiVersion: v1
+    kind: ServiceAccount
+    metadata:
+      name: ef20-sa
+    automountServiceAccountToken: false
+  - apiVersion: v1
+    kind: Service
+    metadata:
+      annotations:
+        kompose.cmd: kompose convert -f compose.yaml -o out.yaml
+        kompose.version: 1.26.0 (40646f47)
+      creationTimestamp: null
+      labels:
+        io.kompose.service: eec
+      name: eec
+    spec:
+      ports:
+        - name: "14599"
+          port: 14599
+          targetPort: 14599
+      selector:
+        io.kompose.service: eec
+    status:
+      loadBalancer: {}
+  - apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+      annotations:
+        kompose.cmd: kompose convert -f compose.yaml -o out.yaml
+        kompose.version: 1.26.0 (40646f47)
+      creationTimestamp: null
+      labels:
+        io.kompose.service: eec
+        app.kubernetes.io/name: eec
+        app.kubernetes.io/instance: eec
+        app.kubernetes.io/version: "1.0.2"
+        app.kubernetes.io/component: proxy
+        app.kubernetes.io/part-of: ef20
+        app.kubernetes.io/managed-by: manual        
+      name: eec
+    spec:
+      replicas: 1
+      selector:
+        matchLabels:
+          io.kompose.service: eec
+      strategy:
+        type: Recreate
+      template:
+        metadata:
+          annotations:
+            kompose.cmd: kompose convert -f compose.yaml -o out.yaml
+            kompose.version: 1.26.0 (40646f47)
+          creationTimestamp: null
+          labels:
+            io.kompose.service: eec
+        spec:
+          securityContext:
+            seccompProfile:
+              type: RuntimeDefault                
+          containers:
+            - image: <YOUR_DOCKER_REGISTRY>/eec_local:0.0.1
+              name: eec          
+              env:
+                - name: EecTokenPath
+                  value: /tmp/config/eec.token
+                - name: ServerUrl
+                  value: 127.0.0.1:9999           
+                - name: TenantId
+                  valueFrom:
+                    configMapKeyRef:
+                      name: config
+                      key: tenant
+              securityContext:
+                privileged: false
+                allowPrivilegeEscalation: false
+                readOnlyRootFilesystem: false
+                runAsNonRoot: true
+                capabilities:
+                  drop: ["all"]                      
+              ports:
+                - containerPort: 14599
+              resources: {}
+              volumeMounts:
+                - mountPath: /tmp/config
+                  name: eec-ag-token
+                  readOnly: true
+                - mountPath: /mnt/dsexecargs
+                  name: dsargs
+                - mountPath: /var/lib/dynatrace/remotepluginmodule/agent/config/extensions/com.dynatrace.extension.snmp-generic-cisco-device
+                  name: extension-generic-cisco                  
+                - mountPath: /var/lib/dynatrace/remotepluginmodule/agent/config/extensions/com.dynatrace.extension.palo-alto-generic
+                  name: extension-palo-alto               
+                - mountPath: /var/lib/dynatrace/remotepluginmodule/agent/conf/runtime
+                  name: runtime-configuration
+                - mountPath: /var/lib/dynatrace/remotepluginmodule/agent/runtime/datasources
+                  name: dstoken-volume
+
+            - image:  <YOUR_ENVIRONMENT_URL>/linux/activegate
+              name: ag
+              env:                          
+                - name: DT_CAPABILITIES
+                  value: extension_controller
+                - name: DT_SERVER
+                  valueFrom:
+                    configMapKeyRef:
+                      name: config
+                      key: server
+                - name: DT_TENANT
+                  valueFrom:
+                    configMapKeyRef:
+                      name: config
+                      key: tenant          
+              securityContext:
+                privileged: false
+                allowPrivilegeEscalation: false
+                readOnlyRootFilesystem: false
+                runAsNonRoot: true
+                capabilities:
+                  drop: ["all"]         
+              ports:
+                - containerPort: 9999
+              resources: {}
+              volumeMounts:
+                - mountPath: /var/lib/dynatrace/gateway/config
+                  name: eec-ag-token
+                - mountPath: /var/lib/dynatrace/secrets/tokens/
+                  name: ag-secrets
+                  readOnly: true
+          serviceAccountName: ef20-sa
+          restartPolicy: Always
+          volumes:
+            - name: eec-ag-token
+            - name: dsargs
+            - name: extension-generic-cisco
+              secret:
+                secretName: extension-generic-cisco
+            - name: extension-palo-alto     
+              secret:
+                secretName: extension-palo-alto
+            - name: runtime-configuration
+              configMap:
+                name: runtime-configuration
+            - name: ag-secrets
+              secret: 
+                secretName: dynatrace-tokens
+            - name: dstoken-volume
+              persistentVolumeClaim: 
+                 claimName: dstoken-pvc
+                                 
+          imagePullSecrets:
+            - name: dynatrace-docker-registry     
+            - name: regcred               
+    status: {}
+    
+  - apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+      annotations:
+        kompose.cmd: kompose convert -f compose.yaml -o out.yaml
+        kompose.version: 1.26.0 (40646f47)
+      creationTimestamp: null
+      labels:
+        io.kompose.service: snmp
+        app.kubernetes.io/name: snmp
+        app.kubernetes.io/instance: snmp-1
+        app.kubernetes.io/version: "1.0.3"
+        app.kubernetes.io/component: datasource
+        app.kubernetes.io/part-of: ef20
+        app.kubernetes.io/managed-by: manual        
+      name: snmp-ds-1
+    spec:
+      replicas: 1
+      selector:
+        matchLabels:
+          io.kompose.service: snmp       
+      strategy: {}
+      template:
+        metadata:
+          annotations:
+            kompose.cmd: kompose convert -f compose.yaml -o out.yaml
+            kompose.version: 1.26.0 (40646f47)
+          creationTimestamp: null
+          labels:
+            io.kompose.service: snmp
+        spec:
+          securityContext:
+            seccompProfile:
+              type: RuntimeDefault              
+          containers:
+            - env:
+                - name: Type
+                  value: SNMP
+                - name: ConfigId
+                  value: paloalto
+                - name: EECPort
+                  value: "14599"
+                - name: EECService
+                  value: http://eec
+                - name: ProbeServerPort
+                  value: "1567"
+
+              image: <YOUR_DOCKER_REGISTRY>/datasources_local:0.0.1
+              name: snmp      
+              securityContext:
+                privileged: false
+                allowPrivilegeEscalation: false
+                readOnlyRootFilesystem: true
+                runAsNonRoot: true
+                capabilities:
+                  drop: ["all"]              
+              resources: {}
+              volumeMounts:
+                - mountPath: /var/lib/dynatrace/remotepluginmodule/agent/runtime/datasources              
+                  name: dstoken-volume                
+          serviceAccountName: ef20-sa
+          imagePullSecrets:
+            - name: regcred                      
+          restartPolicy: Always
+          volumes:
+            - name: dstoken-volume
+              persistentVolumeClaim: 
+                 claimName: dstoken-pvc                                     
+          restartPolicy: Always
+    status: {}
+  - apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+      annotations:
+        kompose.cmd: kompose convert -f compose.yaml -o out.yaml
+        kompose.version: 1.26.0 (40646f47)
+      creationTimestamp: null
+      labels:
+        io.kompose.service: snmp
+        app.kubernetes.io/name: snmp
+        app.kubernetes.io/instance: snmp-2
+        app.kubernetes.io/version: "1.0.3"
+        app.kubernetes.io/component: datasource
+        app.kubernetes.io/part-of: ef20
+        app.kubernetes.io/managed-by: manual           
+      name: snmp-ds-2
+    spec:
+      replicas: 1
+      selector:
+        matchLabels:
+          io.kompose.service: snmp
+      strategy: {}
+      template:
+        metadata:
+          annotations:
+            kompose.cmd: kompose convert -f compose.yaml -o out.yaml
+            kompose.version: 1.26.0 (40646f47)
+          creationTimestamp: null
+          labels:
+            io.kompose.service: snmp
+        spec:
+          securityContext:
+            seccompProfile:
+              type: RuntimeDefault          
+          containers:
+            - env:
+                - name: Type
+                  value: SNMP            
+                - name: ConfigId
+                  value: genericcisco
+                - name: EECPort
+                  value: "14599"
+                - name: EECService
+                  value: http://eec
+                - name: ProbeServerPort
+                  value: "1567"
+              image: <YOUR_DOCKER_REGISTRY>/datasources_local:0.0.1
+              name: snmp      
+              securityContext:
+                privileged: false
+                allowPrivilegeEscalation: false
+                readOnlyRootFilesystem: true
+                runAsNonRoot: true
+                capabilities:
+                  drop: ["all"]              
+              resources: {}
+              volumeMounts:
+                - mountPath: /var/lib/dynatrace/remotepluginmodule/agent/runtime/datasources              
+                  name: dstoken-volume                
+          serviceAccountName: ef20-sa
+          imagePullSecrets:
+            - name: regcred                      
+          restartPolicy: Always
+          volumes:
+            - name: dstoken-volume
+              persistentVolumeClaim: 
+                 claimName: dstoken-pvc          
+    status: {}
+  - apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+      annotations:
+        kompose.cmd: kompose convert -f compose.yaml -o out.yaml
+        kompose.version: 1.26.0 (40646f47)
+      creationTimestamp: null
+      labels:
+        io.kompose.service: prometheus
+        app.kubernetes.io/name: prometheus
+        app.kubernetes.io/instance: prometheus-1
+        app.kubernetes.io/version: "1.0.3"
+        app.kubernetes.io/component: datasource
+        app.kubernetes.io/part-of: ef20
+        app.kubernetes.io/managed-by: manual           
+      name: prometheus-ds-1
+    spec:
+      replicas: 1
+      selector:
+        matchLabels:
+          io.kompose.service: prometheus
+      strategy: {}
+      template:
+        metadata:
+          annotations:
+            kompose.cmd: kompose convert -f compose.yaml -o out.yaml
+            kompose.version: 1.26.0 (40646f47)
+          creationTimestamp: null
+          labels:
+            io.kompose.service: prometheus
+        spec:
+          securityContext:
+            seccompProfile:
+              type: RuntimeDefault          
+          containers:
+            - env:
+                - name: Type
+                  value: prometheus            
+                - name: ConfigId
+                  value: rabbitmq
+                - name: EECPort
+                  value: "14599"
+                - name: EECService
+                  value: http://eec
+                - name: ProbeServerPort
+                  value: "1567"
+              image: <YOUR_DOCKER_REGISTRY>/datasources_local:0.0.1
+              name: prometheus      
+              securityContext:
+                privileged: false
+                allowPrivilegeEscalation: false
+                readOnlyRootFilesystem: true
+                runAsNonRoot: true
+                capabilities:
+                  drop: ["all"]              
+              resources: {}
+              volumeMounts:
+                - mountPath: /var/lib/dynatrace/remotepluginmodule/agent/runtime/datasources              
+                  name: dstoken-volume                
+          serviceAccountName: ef20-sa
+          imagePullSecrets:
+            - name: regcred                      
+          restartPolicy: Always
+          volumes:
+            - name: dstoken-volume
+              persistentVolumeClaim: 
+                 claimName: dstoken-pvc          
+    status: {}
+
+kind: List
+metadata: {}
+

@@ -1,0 +1,26 @@
+{
+"id": "paloalto",
+"extRevision": "0.3.4",
+"userRevision": "0",
+"dataSourceId": "snmp",
+"dataSourceVersion": "5",
+"extConfiguration": {},
+"userConfiguration" : {
+"enabled":true,
+"description":"k8s test - palo alto",
+"version":"1.4.6",
+"featureSets":["interface","virtual_system","gateway"],
+"vars":{},
+"snmp":{
+    "devices":[{"ip":"1.2.3.4","port":161,"authentication":{"type":"SNMPv2c","community":"paloalto_community"},
+    "advanced": {
+      "timeoutSecs": 25,
+      "retries": 2,
+      "maxRepetitions": null,
+      "maxOidsPerQuery": null
+    }}]
+    }
+}
+}
+
+

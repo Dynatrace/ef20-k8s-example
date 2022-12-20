@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: config
+data:
+  server: "<YOUR_ENVIRONMENT_URL>/communication"
+  tenant: <YOUR_TENANT_ID>

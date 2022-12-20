@@ -1,0 +1,49 @@
+{
+"id": "rabbitmq",
+"extRevision": "1.1.4",
+"userRevision": "0",
+"dataSourceId": "prometheus",
+"dataSourceVersion": "5",
+"extConfiguration": {},
+"userConfiguration" : 
+{
+  "enabled": true,
+  "description": "",
+  "version": "1.1.4",
+  "featureSets": [
+    "global",
+    "erlang",
+    "disk",
+    "channels",
+    "connections",
+    "queues",
+    "all",
+    "generic",
+    "raft"
+  ],
+  "activationContext": "REMOTE",
+  "prometheusRemote": {
+    "endpoints": [
+      {
+        "url": "http://4.5.6.7:9090/metrics",
+        "authentication": {
+          "scheme": "basic",
+          "username": "user",
+          "password": "password",
+          "skipVerifyHttps": false
+        }
+      },
+      {
+        "url": "http://7.8.9.10:9090/metrics",
+        "authentication": {
+          "scheme": "bearer",
+          "skipVerifyHttps": true,
+          "token": "token"
+        }
+      }
+    ]
+  }
+}
+}
+
+

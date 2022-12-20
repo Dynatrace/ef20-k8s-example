@@ -1,0 +1,20 @@
+{
+"id": "genericcisco",
+"extRevision": "1.2.4",
+"userRevision": "0",
+"dataSourceId": "snmp",
+"dataSourceVersion": "5",
+"extConfiguration": {},
+"userConfiguration" : {
+"enabled":true,
+"description":"k8s test",
+"version":"1.4.6",
+"featureSets":["Interfaces","Sensors","Health","Traffic"],
+"vars":{},
+"snmp":{
+    "devices":[{"ip":"4.5.6","port":161,"authentication":{"type":"SNMPv2c","community":"genericcisco_community"}}]
+    }
+}
+}
+
+

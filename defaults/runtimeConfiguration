@@ -1,0 +1,28 @@
+{
+    "revision": 1,
+    "booleanMap": {
+        "debugPluginAgentExtendedLogNative": false,
+        "debugPluginAgentFirewallLogNative": true,
+        "debugPluginAgentPluginResolveConflictsNative": true,
+        "debugPluginAgentProtobufLogNative": false,
+        "debugPluginAgentPythonPluginsExtendedLogNative": false,
+        "debugPluginAgentTracemallocDumpsNative": false,
+        "debugPluginAgentUseEngineInFolderNative": true,
+        "debugPluginAgentVerifyEngineZipNative": false,
+        "debugExtensionDSsnmplogoutboundminttraffic": true
+
+    },
+    "stringMap": {
+    "debugExtensionDSsnmpcustomloglevel": "trace"
+    },
+    "longMap": {
+        "debugPluginAgentCpuLimit": 10,
+        "debugPluginAgentDevicesLimitNative": 5000,
+        "debugPluginAgentEventsLimitNative": 100,
+        "debugPluginAgentGroupsLimitNative": 500,
+        "debugPluginAgentMeasurementsLimitNative": 100000,
+        "debugPluginAgentMemoryLimit": 400000000,
+        "debugPluginAgentTracemallocDepthNative": 0,
+        "debugPluginAgentTracemallocIntervalNative": 180
+    }
+}
