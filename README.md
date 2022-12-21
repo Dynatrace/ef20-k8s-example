@@ -1,6 +1,6 @@
 # Purpose of this repo
 
-This repo contains guidelines on how to setup EF2.0 SNMP  (ActiveGate + EEC + datasources) on Kubernetes. It covers all components, provides example with 2 extensions and explains all the files.
+This repo contains guidelines on how to setup EF2.0  (ActiveGate + EEC + datasources - SNMP and Prometheus) on Kubernetes. It covers all components, provides example with 2 extensions and explains all the files.
 
 # Setup steps overview
 
@@ -9,7 +9,7 @@ This repo contains guidelines on how to setup EF2.0 SNMP  (ActiveGate + EEC + da
 3. Create tasks
 4. Create k8s secrets and configs
 5. Create k8s pod for ActiveGate + EEC
-6. Create k8s pods for SNMP datasoures
+6. Create k8s pods for datasoures
 
 # Steps
 
@@ -22,7 +22,7 @@ You also need to activate extension you want to use on HUB. This will enable all
 
 ## Docker images
 
-To run SNMP in your kubernetes cluster you will need following docker containers: ActiveGate, EEC and SNMP 
+To run EF2.0 in your kubernetes cluster you will need following docker containers: ActiveGate, EEC and Datasources
 
 ### ActiveGate
 
@@ -30,20 +30,21 @@ ActiveGate image is avaialable for download from your tenant. You just need to c
 
 Instruction on how to use it are located at https://www.dynatrace.com/support/help/setup-and-configuration/setup-on-container-platforms/kubernetes/enable-kubernetes-api-monitoring/deploy-activegate-as-statefulset-kubernetes#expand--ag-monitoring-and-routing-yaml--3
 
-### EEC and SNMP
+### EEC and Datasources
 
-EEC is component that is endpoint for SNMP datasources to get configurations and post metrics and statuses. SNMP datasource is a component that uses configuration to access SNMP devices and post statuses and metrics. Currently any of those is not available as container image.
+EEC is component that is endpoint for datasources to get configurations and post metrics and statuses. 
+Datasources are actual workers that use configuration provided by EEC. Currently in this example there are two datasources: SNMP and prometheus
 
 To create those docker images you can run `buildimages.sh` script in `images` directory
 
 ## Create tasks
 
-Task is a single extension configuration with unique identification for SNMP datasource. Each configuration may have multiple devices configured. Since tasks contain confidential information (device adresses and authentication settings) they are stored as Kubernetes secret and are mounted as files.
+Task is a single extension configuration with unique identification for a datasource. Each configuration may have multiple devices configured. Since tasks contain confidential information (device adresses and authentication settings) they are stored as Kubernetes secret and are mounted as files.
 
 To prepare setup you need to prepare folders for each extension (each folder has the same name as extension name), in which there should be extension.yaml and files for tasks.
 Each task file is json file, you can check file defaults/taskTemplate.json how task file should look like. Most important fields are "id" and "userConfiguration". 
 Each "id" value must be unique.
-userConfiguration holds configuration provided to SNMP datasource. It has the same value as "value" object in configuration provided by REST API or Dynatrace HUB.
+userConfiguration holds configuration provided to datasource. It has the same value as "value" object in configuration provided by REST API or Dynatrace HUB.
 
 ## Create k8s secrets and configs
 
@@ -102,15 +103,15 @@ EEC uses following volume mounts:
 
  - eec-ag-token - to share authentication token between ActiveGate and EEC (see EecTokenPath environment variable) 
  - dsargs - not used for this implementation, but required - mount at /mnt/dsexecargs
- - dstoken-volume - to share authentication token between EEC and SNMP pods. Mount at `/var/lib/dynatrace/remotepluginmodule/agent/runtime/datasources`
+ - dstoken-volume - to share authentication token between EEC and datasource pods. Mount at `/var/lib/dynatrace/remotepluginmodule/agent/runtime/datasources`
  - runtime-configuration - for EEC runtimeConfiguration file, should be mounted at `/var/lib/dynatrace/remotepluginmodule/agent/conf/runtime`
  - extension mounts. Each mount has name matching extension (i.e. extension-generic-cisco for com.dynatrace.extension.snmp-generic-cisco-device) and mount approperiate secret in `/var/lib/dynatrace/remotepluginmodule/agent/config/extensions`, for example `/var/lib/dynatrace/remotepluginmodule/agent/config/extensions/com.dynatrace.extension.snmp-generic-cisco-device` should contain extension.yaml for generic cisco extension and all task files for this extension
 
 There should also be service exposing EEC to other pods - by default EEC listens to port 14599
 
-## Create k8s pods for SNMP datasources
+## Create k8s pods for datasources
 
-Each SNMP pod handles one configuration with unique ID. It requires following environment variables:
+Each datasource pod handles one configuration with unique ID. It requires following environment variables:
 
  - ConfigId - unique value corresponding with id provided in task file
  - EECPort - port used by EEC service
@@ -119,7 +120,7 @@ Each SNMP pod handles one configuration with unique ID. It requires following en
 
 # Example
 
-In example folder there are k8s yaml files with configs, secrets and example deployment monitoring 2 SNMP devices - cisco and palo alto.
+In example folder there are k8s yaml files with configs, secrets and example deployment monitoring 2 SNMP devices - cisco and palo alto as well as RabbitMQ Prometheus extension.
 
 ## Helper scripts
 
@@ -144,9 +145,9 @@ There is one Persistent volume claim file - pvc.yaml, using Azure file.csi.azure
 
 ## Kubernetes configuration.
 
-In k8s.yaml there is full example configuration of running setup with 2 SNMP datasources. To adjust the setup you have to modify container images used in this example:
+In k8s.yaml there is full example configuration of running setup with 2 SNMP datasources and one prometheus. To adjust the setup you have to modify container images used in this example:
 
  - ActiveGate - from <YOUR_ENVIRONMENT_URL>/linux/activegate to actual environment url
- - EEC and SNMP from <YOUR_DOCKER_REGISTRY> to docker registry used to stored container images. Remember you will need `regcred` secret with credentials to this repo
+ - EEC and Datasources from <YOUR_DOCKER_REGISTRY> to docker registry used to stored container images. Remember you will need `regcred` secret with credentials to this repo
 
 
